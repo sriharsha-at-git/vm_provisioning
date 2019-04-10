@@ -1,0 +1,52 @@
+##################################################
+### Vagrant file to get box from vagrantup.com
+# Vagrant.configure("2") do |config|
+#   config.vm.box = "sriharsha-inthub/ubuntudocker"
+#   config.vm.box_version = "16.17.03"
+# end
+### To instiantiate an instance
+# vagrant init sriharsha-inthub/ubuntudocker --box-version 16.17.03
+# vagrant up
+##################################################
+
+script_path = '../scripts'
+
+##### *** START *** configuration #####
+Vagrant.configure("2") do |config|
+  
+   # $$$$$ *** START *** Linux-Ubuntu docker node $$$$$
+  config.vm.box = "ubuntuDockerKubernetes"
+  config.disksize.size = '30GB'
+  config.vm.hostname = "udockerk8s"
+  config.vm.network "private_network", ip: "192.168.33.20"
+  #config.vm.synced_folder "D:/shared/softwares", "/shared_data"
+  #ubuntu.vm.network "public_network"
+  #ubuntu.vm.network "forwarded_port", guest: 9483, host: 19483
+  #ubuntu.vm.network "forwarded_port", guest: 7600, host: 17600
+  #ubuntu.vm.network "forwarded_port", guest: 7800, host: 17800
+  #ubuntu.vm.network "forwarded_port", guest: 7483, host: 17483
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  # config.vm.network "public_network"
+
+  # ===== START ===== Set VM resources
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "4068"
+    vb.name = "udockerk8s.inthub.local"
+    vb.cpus = 2
+  end
+  # ===== END ===== Set VM resources
+  
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Puppet, Chef, Ansible, Salt, and Docker are also available.
+  # ubuntu.vm.provision "shell", inline: $installDocker
+    
+  ### *** START *** Provision ###
+  config.vm.provision "shell" do |script|
+    script.path = "#{script_path}/setup_docker.sh"
+    script.path = "#{script_path}/setup_kubernetes.sh"
+    #script.args = %w(kubernetes_version_1.14)
+  end
+  ### *** END *** Provision ###
+  
+end
+##### *** END *** configuration #####
